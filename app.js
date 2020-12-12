@@ -70,6 +70,8 @@ app.route("/articles")
 
 // Quick Note: to search for articles(data) containing space add %20 instead of space in the url
 app.route("/articles/:articleName")  // route handler    
+
+    // GET request
     .get(function(req,res){
         const name =  req.params.articleName;
         Article.findOne({title:name}, function(err,articleFound){
@@ -79,7 +81,28 @@ app.route("/articles/:articleName")  // route handler
                 res.send("No items matching this name found!");
             }
         });         
-    });
+    })   
+
+    // PUT request - used to update a data with new data
+    // put request replaces an entire resource, so if earlier we had 2 items in the data and we replace it with one, our new entry will only have one item
+    .put(function(req,res){
+        const name = req.params.articleName
+
+        Article.update(
+            {title : name},     // which article to update
+            {title : req.body.title, content: req.body.content},     // new updates
+            {overwrite : true},    //specifying this is necessary when using mongoose
+            function(err){
+                if(!err){
+                    res.send("Successfuly updated!");
+                }else{
+                    res.send("Couldn't update. Please check the name and try again!");
+                }
+            }
+        )
+    }) 
+
+
 
 
 app.listen(3000,function(){
