@@ -120,7 +120,24 @@ app.route("/articles/:articleName")  // route handler
                 }
             }
         );
+    })
+    
+    .delete(function(req,res){
+        const deleteName = req.params.articleName
+
+        Article.deleteOne(
+            {title:deleteName},
+            function(err){
+                if(!err){
+                    res.send("Deleted entry successfully!");
+                }else{
+                    res.send(err);
+                }
+            }
+        );
+
     });
+
 
 app.listen(3000,function(){
     console.log("Server is running on port 3000!");
