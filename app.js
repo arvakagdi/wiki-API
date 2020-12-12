@@ -88,7 +88,7 @@ app.route("/articles/:articleName")  // route handler
     .put(function(req,res){
         const name = req.params.articleName
 
-        Article.update(
+        Article.updateOne(
             {title : name},     // which article to update
             {title : req.body.title, content: req.body.content},     // new updates
             {overwrite : true},    //specifying this is necessary when using mongoose
@@ -102,8 +102,25 @@ app.route("/articles/:articleName")  // route handler
         )
     }) 
 
+    // PATCH request - used to update a data and will replace old entries with new entries and if for any field is not provided it will keep the old one
+    // patch request does'nt replace an entire resource, it will update a part/entire resource depending on fields provided by the client
 
+    .patch(function(req,res){
+        const name = req.params.articleName
 
+        Article.updateOne(
+            {title: name},   //which item (condition)
+            // we use req.body as parser will return a JSON file with fiels to be modified, so the set flaf will have to set only those fields
+            {$set: req.body},    
+            function(err){
+                if(!err){
+                    res.send("Successfuly updated!");
+                }else{
+                    res.send("Couldn't update. Please check the name and try again!");
+                }
+            }
+        );
+    });
 
 app.listen(3000,function(){
     console.log("Server is running on port 3000!");
