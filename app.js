@@ -19,6 +19,8 @@ const articleSchema = mongoose.Schema({  //create Schema
 
 const Article = mongoose.model("Article",articleSchema)   //create Model
 
+
+// *******--- Below are requests made by client on an entire collection which includes GET, POST, DELETE ---*******//
 // Refactoring the code to use chain route handler using express to remove redunduncy and typos
 
 app.route("/articles")
@@ -60,6 +62,23 @@ app.route("/articles")
                 res.send(err);
             }
         })
+    });
+
+
+
+// *******--- Below are requests made by client to a specific data from a collection including GET, PUT, PATCH, DELETE ---*******//
+
+// Quick Note: to search for articles(data) containing space add %20 instead of space in the url
+app.route("/articles/:articleName")  // route handler    
+    .get(function(req,res){
+        const name =  req.params.articleName;
+        Article.findOne({title:name}, function(err,articleFound){
+            if(articleFound){
+                res.send(articleFound)
+            }else{
+                res.send("No items matching this name found!");
+            }
+        });         
     });
 
 
